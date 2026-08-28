@@ -1285,6 +1285,13 @@
           popGain(15);
           sfx("roe");
           burst(0, player.y + 0.3, PLAYER_Z, 0xff5ea8, 10, 2.2);
+          if (roe % 10 === 0 && lives < START_LIVES) {
+            lives += 1;
+            setLives();
+            sfx("heart");
+            popGain("❤");
+            burst(0, player.y + 0.2, PLAYER_Z, 0xff4d7a, 12, 2.2);
+          }
         }
       }
     }
