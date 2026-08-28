@@ -971,6 +971,9 @@
     else kind = "fork";
 
     if (n > 6 && n % 9 === 4 && kind === "go") kind = "spring";
+    var wantHeart = n > 0 && n % 11 === 0;
+    var wantJet = n > 12 && n % 17 === 8;
+    if ((wantHeart || wantJet) && kind === "spring") kind = "go";
 
     dir = stairDir;
     if (kind === "flip") {
@@ -984,6 +987,7 @@
     step = Math.min(MAX_TURN, step);
 
     var paired = false;
+    var safeIsSpring = false;
     if (kind === "decoyNear" || kind === "decoyFar") {
       hTrap = Math.min(0.34, pickHalf(n, diff, "mid"));
       hSafe = Math.min(0.24, pickHalf(n, diff, "thin"));
@@ -1013,7 +1017,8 @@
       aTrap = lastSafeAng + dir * Math.min(MAX_TURN, 0.70 + rand() * 0.40);
       aSafe = lastSafeAng - dir * Math.min(MAX_TURN, 0.70 + rand() * 0.40);
       addPlatform(n, aTrap, hTrap, "spike");
-      addPlatform(n, aSafe, hSafe, rand() < 0.2 ? "spring" : "safe");
+      safeIsSpring = !(wantHeart || wantJet) && rand() < 0.2;
+      addPlatform(n, aSafe, hSafe, safeIsSpring ? "spring" : "safe");
       lastSafeAng = aSafe;
       stairDir = -dir;
       ang = aSafe;
@@ -1022,15 +1027,16 @@
     if (!paired) {
       half = n <= 2 ? 0.50 : pickHalf(n, diff, pickStyle());
       ang = lastSafeAng + dir * step;
-      addPlatform(n, ang, half, kind === "spring" ? "spring" : "safe");
+      safeIsSpring = kind === "spring";
+      addPlatform(n, ang, half, safeIsSpring ? "spring" : "safe");
       lastSafeAng = ang;
     }
 
-    if (kind !== "decoyNear" && kind !== "decoyFar" && kind !== "fork" && rand() < 0.36) {
+    if (wantHeart) makeHeart(n * FLOOR_H, ang);
+    else if (wantJet) makeJet(n * FLOOR_H, ang);
+    else if (!safeIsSpring && kind !== "decoyNear" && kind !== "decoyFar" && kind !== "fork" && rand() < 0.36) {
       makeRoe(n * FLOOR_H, ang);
     }
-    if (n > 0 && n % 11 === 0) makeHeart(n * FLOOR_H, ang);
-    if (n > 12 && n % 17 === 8) makeJet(n * FLOOR_H, ang);
     if (n > 9 && n % 8 === 3) makeMace(n * FLOOR_H, ang + 1.35);
     if (n > 22 && n % 13 === 2) makeMace(n * FLOOR_H, ang - 1.4);
   }
