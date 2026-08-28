@@ -869,17 +869,23 @@
 
   function makeJet(y, ang) {
     var g = new THREE.Group();
-    var body = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 0.42, 10), mats.jet);
-    body.rotation.x = Math.PI / 2;
-    g.add(body);
-    var nose = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.22, 10), mats.jetCap);
-    nose.rotation.x = Math.PI / 2;
-    nose.position.z = 0.28;
-    g.add(nose);
+    var i, t;
+    for (i = 0; i < 5; i++) {
+      t = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.038, 6, 14), i % 2 ? mats.spring : mats.springDk);
+      t.rotation.x = Math.PI / 2;
+      t.position.y = i * 0.085;
+      g.add(t);
+    }
+    var pad = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.06, 12), mats.springCap);
+    pad.position.y = 0.46;
+    g.add(pad);
+    var arrow = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.18, 8), mats.wasabi);
+    arrow.position.y = 0.62;
+    g.add(arrow);
     var r = (PLAT_IN + PLAT_OUT) * 0.5;
-    g.position.set(Math.sin(ang) * r, y + 0.85, Math.cos(ang) * r);
+    g.position.set(Math.sin(ang) * r, y + 0.78, Math.cos(ang) * r);
     g.userData.ang = ang;
-    g.userData.y = y + 0.85;
+    g.userData.y = y + 0.78;
     g.userData.kind = "jet";
     g.userData.ph = rand() * 6;
     g.userData.alive = true;
