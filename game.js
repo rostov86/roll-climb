@@ -326,7 +326,7 @@
     g.beginPath(); g.ellipse(cx - 42, cy - 42, 24, 12, -0.5, 0, Math.PI * 2); g.fill();
   });
 
-  var towerTex = canvasTex(256, 512, function (g, w, h) {
+  var towerTex = canvasTex(512, 1024, function (g, w, h) {
     var y, i, band, x;
     g.fillStyle = "#F6F3EE";
     g.fillRect(0, 0, w, h);
@@ -361,7 +361,47 @@
     }
   });
   towerTex.wrapS = towerTex.wrapT = THREE.RepeatWrapping;
-  towerTex.repeat.set(1, 8);
+  towerTex.repeat.set(2, 5);
+  towerTex.anisotropy = 8;
+
+  function stampTowerLogos() {
+    var imgW = new Image();
+    var imgS = new Image();
+    var left = 2;
+    function done() {
+      left -= 1;
+      if (left > 0) return;
+      if (!imgW.width && !imgS.width) return;
+      var c = towerTex.image;
+      var ctx = c.getContext("2d");
+      var w = c.width, h = c.height;
+      var cols = 3, rows = 8, col, row, img, sc, iw, ih, x, y, odd;
+      ctx.save();
+      for (row = 0; row < rows; row++) {
+        for (col = 0; col < cols; col++) {
+          odd = (row + col) % 2 === 1;
+          img = odd && imgS.width ? imgS : (imgW.width ? imgW : imgS);
+          if (!img.width) continue;
+          sc = odd ? 1.55 : 1.05;
+          iw = img.width * sc;
+          ih = img.height * sc;
+          x = (col + 0.5) * (w / cols) - iw * 0.5 + (row % 2 ? w / (cols * 2) : 0);
+          y = (row + 0.5) * (h / rows) - ih * 0.5;
+          ctx.globalAlpha = odd ? 0.40 : 0.32;
+          ctx.drawImage(img, x, y, iw, ih);
+        }
+      }
+      ctx.restore();
+      towerTex.needsUpdate = true;
+    }
+    imgW.onload = done;
+    imgS.onload = done;
+    imgW.onerror = done;
+    imgS.onerror = done;
+    imgW.src = "logo.png";
+    imgS.src = "logo-s.png";
+  }
+  stampTowerLogos();
 
   function paintWood(g, w, h, c0, c1, c2) {
     var i, x, y;
@@ -574,39 +614,6 @@
     for (i = 0; i < goldRings.length; i++) goldRings[i].position.y = baseY + i * step + 4;
   }
 
-  var logoDecals = [];
-  function placeLogoDecals() {
-    var n = logoDecals.length;
-    if (!n) return;
-    var step = 22;
-    var baseY = Math.floor((player.y - 10) / step) * step;
-    var i;
-    for (i = 0; i < n; i++) logoDecals[i].position.y = baseY + i * step + 11;
-  }
-  (function loadLogoDecals() {
-    try {
-      var loader = new THREE.TextureLoader();
-      loader.load("logo-s.png", function (tex) {
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.needsUpdate = true;
-        var mat = new THREE.MeshBasicMaterial({
-          map: tex, transparent: true, opacity: 0.42, depthWrite: false, side: THREE.FrontSide
-        });
-        var geo = new THREE.PlaneGeometry(0.72, 0.9);
-        var i, m, ang, r;
-        r = TOWER_R + 0.015;
-        for (i = 0; i < 5; i++) {
-          ang = i * 2.2 + 0.55;
-          m = new THREE.Mesh(geo, mat);
-          m.position.set(Math.sin(ang) * r, 0, Math.cos(ang) * r);
-          m.rotation.y = ang;
-          towerGroup.add(m);
-          logoDecals.push(m);
-        }
-        placeLogoDecals();
-      }, undefined, function () {});
-    } catch (err) {}
-  })();
 
   /* ---------- sushi roll ---------- */
   var roll = new THREE.Group();
@@ -1051,7 +1058,6 @@
     towerSegs[0].position.y = base + SEG_H * 0.5;
     towerSegs[1].position.y = base + SEG_H * 1.5;
     placeGoldRings();
-    placeLogoDecals();
   }
 
   /* ---------- particles ---------- */
