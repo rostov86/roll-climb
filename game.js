@@ -361,7 +361,7 @@
     }
   });
   towerTex.wrapS = towerTex.wrapT = THREE.RepeatWrapping;
-  towerTex.repeat.set(2, 5);
+  towerTex.repeat.set(1, 4);
   towerTex.anisotropy = 8;
 
   function stampTowerLogos() {
@@ -375,19 +375,24 @@
       var c = towerTex.image;
       var ctx = c.getContext("2d");
       var w = c.width, h = c.height;
-      var cols = 3, rows = 8, col, row, img, sc, iw, ih, x, y, odd;
+      var padX = w * 0.14, padY = h * 0.08;
+      var innerW = w - padX * 2, innerH = h - padY * 2;
+      var cols = 2, rows = 5, col, row, img, maxW, maxH, sc, iw, ih, x, y, odd;
       ctx.save();
       for (row = 0; row < rows; row++) {
         for (col = 0; col < cols; col++) {
           odd = (row + col) % 2 === 1;
           img = odd && imgS.width ? imgS : (imgW.width ? imgW : imgS);
           if (!img.width) continue;
-          sc = odd ? 1.55 : 1.05;
+          maxW = innerW / cols * 0.78;
+          maxH = innerH / rows * 0.72;
+          sc = Math.min(maxW / img.width, maxH / img.height);
           iw = img.width * sc;
           ih = img.height * sc;
-          x = (col + 0.5) * (w / cols) - iw * 0.5 + (row % 2 ? w / (cols * 2) : 0);
-          y = (row + 0.5) * (h / rows) - ih * 0.5;
-          ctx.globalAlpha = odd ? 0.40 : 0.32;
+          x = padX + (col + 0.5) * (innerW / cols) - iw * 0.5;
+          y = padY + (row + 0.5) * (innerH / rows) - ih * 0.5;
+          if (x < padX || y < padY || x + iw > w - padX || y + ih > h - padY) continue;
+          ctx.globalAlpha = odd ? 0.38 : 0.30;
           ctx.drawImage(img, x, y, iw, ih);
         }
       }
