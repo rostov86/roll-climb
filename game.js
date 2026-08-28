@@ -1,4 +1,4 @@
-/* Ролл вверх — hyper-casual vertical climber. Sushi roll auto-bounces; player rotates the tower. */
+/* Ролл вверх — Суши-Студио. Hyper-casual vertical climber. Sushi roll auto-bounces; player rotates the tower. */
 (function () {
   "use strict";
   if (typeof THREE === "undefined") {
@@ -33,11 +33,11 @@
   var START_LIVES = 3;
 
   var ZONES = [
-    { y: 0,   name: "ЗОНА 01 — НОРИ",   sky: 0x7ed2fb, fog: 0xb5e4fa, hemi: 0xfff6e6, ground: 0x4aa3c8 },
-    { y: 100, name: "ЗОНА 02 — ЗАКАТ",  sky: 0xff8d62, fog: 0xffc4a0, hemi: 0xffd8b0, ground: 0xd06088 },
-    { y: 200, name: "ЗОНА 03 — ИКРА",   sky: 0xd060a8, fog: 0xeba0c8, hemi: 0xffd4ea, ground: 0x6e3c8c },
-    { y: 320, name: "ЗОНА 04 — ВАСАБИ", sky: 0x3eae82, fog: 0x72cba4, hemi: 0xdcffd4, ground: 0x1c6346 },
-    { y: 460, name: "ЗОНА 05 — НОЧЬ УМИ", sky: 0x1a1a62, fog: 0x32327a, hemi: 0xd0d8ff, ground: 0x0c0c32 }
+    { y: 0,   name: "ЗОНА 01 — СТУДИО", sky: 0xf3d5b8, fog: 0xf6f3ee, hemi: 0xfff6e8, ground: 0xe8a070 },
+    { y: 100, name: "ЗОНА 02 — СЯКЕ",   sky: 0xff931e, fog: 0xffc090, hemi: 0xffe0c0, ground: 0xe86a3c },
+    { y: 200, name: "ЗОНА 03 — ЗАКАТ",  sky: 0xe86a3c, fog: 0xffa070, hemi: 0xffd4b8, ground: 0x8a3a28 },
+    { y: 320, name: "ЗОНА 04 — СУМРАК", sky: 0x5a3a32, fog: 0x8a5a48, hemi: 0xffc8a0, ground: 0x2a1a18 },
+    { y: 460, name: "ЗОНА 05 — НОЧЬ",   sky: 0x1a1a18, fog: 0x2c241c, hemi: 0xffb070, ground: 0x222220 }
   ];
 
   var overlay = document.getElementById("overlay");
@@ -150,7 +150,7 @@
   var renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(innerWidth, innerHeight);
-  renderer.setClearColor(0x7ed2fb, 1);
+  renderer.setClearColor(0xf3d5b8, 1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -159,12 +159,12 @@
   document.body.insertBefore(renderer.domElement, document.body.firstChild);
 
   var scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xb5e4fa, 18, 54);
+  scene.fog = new THREE.Fog(0xf6f3ee, 18, 54);
 
   var camera = new THREE.PerspectiveCamera(52, innerWidth / Math.max(1, innerHeight), 0.1, 80);
   camera.position.set(0, -2.2, 8.4);
 
-  var hemi = new THREE.HemisphereLight(0xfff4dc, 0x4aa0d0, 0.62);
+  var hemi = new THREE.HemisphereLight(0xfff6e8, 0xe8a070, 0.62);
   scene.add(hemi);
   var sun = new THREE.DirectionalLight(0xfff2d4, 1.08);
   sun.position.set(6, 14, 8);
@@ -185,7 +185,7 @@
   var fillLite = new THREE.DirectionalLight(0xffe0b8, 0.32);
   fillLite.position.set(-6, 8, 3);
   scene.add(fillLite);
-  var rimLite = new THREE.DirectionalLight(0xc5e0ff, 0.34);
+  var rimLite = new THREE.DirectionalLight(0xffc090, 0.34);
   rimLite.position.set(7.2, 4, 5.4);
   scene.add(rimLite);
   scene.add(new THREE.AmbientLight(0xffffff, 0.12));
@@ -231,10 +231,10 @@
 
   var noriTex = canvasTex(128, 256, function (g, w, h) {
     var i, j, x, y;
-    g.fillStyle = "#163824";
+    g.fillStyle = "#1A1A18";
     g.fillRect(0, 0, w, h);
     for (i = 0; i < 70; i++) {
-      g.fillStyle = i % 2 ? "rgba(8,28,16,.4)" : "rgba(78,132,88,.16)";
+      g.fillStyle = i % 2 ? "rgba(8,8,6,.45)" : "rgba(70,90,60,.14)";
       g.fillRect(0, (i / 70) * h, w, 5);
     }
     g.strokeStyle = "rgba(10,26,14,.32)";
@@ -328,28 +328,30 @@
 
   var towerTex = canvasTex(256, 512, function (g, w, h) {
     var y, i, band, x;
-    g.fillStyle = "#f4e6d0";
+    g.fillStyle = "#F6F3EE";
     g.fillRect(0, 0, w, h);
     for (y = 0; y < h; y += 40) {
       band = (y / 40) % 2 === 0;
-      g.fillStyle = band ? "#f8efe2" : "#ead4b6";
+      g.fillStyle = band ? "#FAF7F2" : "#EFE6D8";
       g.fillRect(0, y, w, 38);
-      g.fillStyle = "rgba(255,255,255,.22)";
+      g.fillStyle = "rgba(255,255,255,.28)";
       g.fillRect(0, y + 2, w, 7);
-      g.fillStyle = "#d4a84a";
+      g.fillStyle = "#FF931E";
       g.fillRect(0, y + 35, w, 3);
-      g.fillStyle = "rgba(255, 236, 180, 0.65)";
+      g.fillStyle = "rgba(255, 210, 160, 0.7)";
       g.fillRect(0, y + 35, w, 1);
+      g.fillStyle = "#222220";
+      g.fillRect(0, y + 38, w, 1);
       if (!band) {
-        g.fillStyle = "rgba(46, 90, 58, 0.32)";
-        g.fillRect(0, y + 10, w, 3);
+        g.fillStyle = "rgba(34, 34, 32, 0.18)";
+        g.fillRect(0, y + 10, w, 2);
       }
       for (x = 0; x < w; x += 18) {
-        g.fillStyle = "rgba(140, 96, 48, 0.06)";
+        g.fillStyle = "rgba(34, 34, 32, 0.04)";
         g.fillRect(x + (y % 12), y + 6, 2, 26);
       }
     }
-    g.strokeStyle = "rgba(180, 150, 110, .22)";
+    g.strokeStyle = "rgba(34, 34, 32, .08)";
     g.lineWidth = 2;
     for (i = 0; i < 10; i++) {
       g.beginPath();
@@ -446,9 +448,9 @@
     nori: stdMat({ map: noriTex, color: 0xffffff, metalness: 0.06, roughness: 0.68 }),
     cap: stdMat({ map: capTex, metalness: 0.05, roughness: 0.52 }),
     tower: stdMat({ map: towerTex, color: 0xffffff, metalness: 0.08, roughness: 0.46 }),
-    plat: stdMat({ map: woodTex, color: 0xf0d8b4, side: THREE.DoubleSide, metalness: 0.12, roughness: 0.42 }),
-    platTop: stdMat({ map: woodTex, color: 0xfff1dc, side: THREE.DoubleSide, metalness: 0.14, roughness: 0.38 }),
-    platEdge: stdMat({ color: 0xe8dcc4, side: THREE.DoubleSide, metalness: 0.06, roughness: 0.55 }),
+    plat: stdMat({ map: woodTex, color: 0xf6e8d4, side: THREE.DoubleSide, metalness: 0.12, roughness: 0.42 }),
+    platTop: stdMat({ map: woodTex, color: 0xfff8f0, side: THREE.DoubleSide, metalness: 0.14, roughness: 0.38 }),
+    platEdge: stdMat({ color: 0xf6f3ee, side: THREE.DoubleSide, metalness: 0.06, roughness: 0.55 }),
     spike: stdMat({ color: 0xff3d5c, emissive: 0xff2040, emissiveIntensity: 0.25, metalness: 0.2, roughness: 0.32 }),
     spikeDark: stdMat({ color: 0x2a2428, side: THREE.DoubleSide, metalness: 0.18, roughness: 0.5 }),
     spikeGlow: new THREE.MeshBasicMaterial({ color: 0xff4466, transparent: true, opacity: 0.38, side: THREE.DoubleSide, depthWrite: false }),
@@ -458,16 +460,16 @@
     mace: stdMat({ color: 0xff3b6b, metalness: 0.22, roughness: 0.36 }),
     maceArm: stdMat({ color: 0x6d5c7a, metalness: 0.35, roughness: 0.48 }),
     metal: stdMat({ color: 0xcfd8dc, metalness: 0.55, roughness: 0.35 }),
-    gold: stdMat({ color: 0xe8c35a, metalness: 0.72, roughness: 0.28, emissive: 0x5a3a10, emissiveIntensity: 0.12 }),
-    rice: stdMat({ color: 0xfff6ea, metalness: 0.05, roughness: 0.55 }),
+    gold: stdMat({ color: 0xff931e, metalness: 0.42, roughness: 0.36, emissive: 0xc46810, emissiveIntensity: 0.16 }),
+    rice: stdMat({ color: 0xf6f3ee, metalness: 0.05, roughness: 0.55 }),
     sesame: stdMat({ color: 0xf5f0e0, metalness: 0.05, roughness: 0.6 }),
-    roe: stdMat({ color: 0xff5ea8, emissive: 0x6a1038, emissiveIntensity: 0.4, metalness: 0.08, roughness: 0.42 }),
-    roeHi: new THREE.MeshBasicMaterial({ color: 0xffc4e0 }),
+    roe: stdMat({ color: 0xff8a4a, emissive: 0xe86a3c, emissiveIntensity: 0.28, metalness: 0.08, roughness: 0.42 }),
+    roeHi: new THREE.MeshBasicMaterial({ color: 0xffd2b0 }),
     jet: stdMat({ color: 0x41e0a0, emissive: 0x0a6a40, emissiveIntensity: 0.4, metalness: 0.15, roughness: 0.4 }),
     jetCap: stdMat({ color: 0xffe082, metalness: 0.2, roughness: 0.36 }),
     flame: new THREE.MeshBasicMaterial({ color: 0xff9100, transparent: true, opacity: 0.9 }),
     flame2: new THREE.MeshBasicMaterial({ color: 0xffe082, transparent: true, opacity: 0.85 }),
-    cloud: new THREE.MeshBasicMaterial({ map: cloudTex, transparent: true, opacity: 0.9, depthWrite: false, color: 0xfff8f0 }),
+    cloud: new THREE.MeshBasicMaterial({ map: cloudTex, transparent: true, opacity: 0.9, depthWrite: false, color: 0xf6f3ee }),
     lantern: new THREE.MeshBasicMaterial({ map: lanternTex, transparent: true, opacity: 0.92, depthWrite: false }),
     shadow: new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, opacity: 0.9, depthWrite: false }),
     base: stdMat({ map: woodDarkTex, color: 0xffffff, metalness: 0.08, roughness: 0.55 }),
@@ -512,7 +514,7 @@
 
   var towerSegs = [];
   var SEG_H = 72;
-  var towerFillMat = stdMat({ color: 0xf2e4cc, metalness: 0.06, roughness: 0.55 });
+  var towerFillMat = stdMat({ color: 0xf6f3ee, metalness: 0.06, roughness: 0.55 });
   function makeTowerSeg() {
     var wrap = new THREE.Group();
     var mesh = new THREE.Mesh(
@@ -571,6 +573,40 @@
     var i;
     for (i = 0; i < goldRings.length; i++) goldRings[i].position.y = baseY + i * step + 4;
   }
+
+  var logoDecals = [];
+  function placeLogoDecals() {
+    var n = logoDecals.length;
+    if (!n) return;
+    var step = 22;
+    var baseY = Math.floor((player.y - 10) / step) * step;
+    var i;
+    for (i = 0; i < n; i++) logoDecals[i].position.y = baseY + i * step + 11;
+  }
+  (function loadLogoDecals() {
+    try {
+      var loader = new THREE.TextureLoader();
+      loader.load("logo-s.png", function (tex) {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.needsUpdate = true;
+        var mat = new THREE.MeshBasicMaterial({
+          map: tex, transparent: true, opacity: 0.42, depthWrite: false, side: THREE.FrontSide
+        });
+        var geo = new THREE.PlaneGeometry(0.72, 0.9);
+        var i, m, ang, r;
+        r = TOWER_R + 0.015;
+        for (i = 0; i < 5; i++) {
+          ang = i * 2.2 + 0.55;
+          m = new THREE.Mesh(geo, mat);
+          m.position.set(Math.sin(ang) * r, 0, Math.cos(ang) * r);
+          m.rotation.y = ang;
+          towerGroup.add(m);
+          logoDecals.push(m);
+        }
+        placeLogoDecals();
+      }, undefined, function () {});
+    } catch (err) {}
+  })();
 
   /* ---------- sushi roll ---------- */
   var roll = new THREE.Group();
@@ -1015,6 +1051,7 @@
     towerSegs[0].position.y = base + SEG_H * 0.5;
     towerSegs[1].position.y = base + SEG_H * 1.5;
     placeGoldRings();
+    placeLogoDecals();
   }
 
   /* ---------- particles ---------- */
@@ -1124,9 +1161,9 @@
     setLives();
     ensureFloors();
     overlay.classList.remove("lose");
-    ovTitle.textContent = "РОЛЛ ВВЕРХ";
-    ovTag.textContent = "Крути башню · ролл прыгает сам";
-    ovMsg.textContent = "Крути цилиндр, чтобы площадка оказалась под роллом. Не прыгай — он прыгает сам. Колючки и булавы — мимо.";
+    ovTitle.innerHTML = "СУШИ<span class=\"wm\">СТУДИО</span>";
+    ovTag.textContent = "Ролл вверх · крути башню";
+    ovMsg.textContent = "Крути цилиндр, чтобы площадка оказалась под роллом. В Суши-Студио он прыгает сам — ты только крутишь башню. Колючки и булавы — мимо.";
     ovStats.textContent = "";
     ovGo.textContent = "Нажми, чтобы начать";
   }
@@ -1154,7 +1191,7 @@
     overlay.classList.remove("hidden");
     overlay.classList.add("lose");
     ovTitle.textContent = "Ролл упал!";
-    ovTag.textContent = "Башня крутится · ролл прыгает сам";
+    ovTag.textContent = "Ролл вверх · крути башню";
     ovMsg.textContent = "Не попал на площадку или задел шипы.";
     ovStats.textContent = "Счёт " + score + "  ·  " + Math.floor(maxY) + " м  ·  флоу ×" + maxCombo;
     ovGo.textContent = "Ещё раз";
