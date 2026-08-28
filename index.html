@@ -160,6 +160,24 @@
       filter: invert(1);
       opacity: .16;
     }
+    #overlay .demo {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #222220;
+      opacity: .72;
+      margin-bottom: 10px;
+    }
+    #overlay.lose .demo { color: #F6F3EE; opacity: .7; }
+    #overlay .author {
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #222220;
+      opacity: .78;
+    }
+    #overlay.lose .author { color: #F6F3EE; opacity: .75; }
     #roll-ico {
       width: 110px; height: 110px;
       border-radius: 24px;
@@ -280,15 +298,17 @@
   <div id="hurtflash"></div>
   <div id="overlay">
     <img class="brand-s" src="logo-s.png" alt="" />
+    <div class="demo">Демо версия</div>
     <img id="roll-ico" src="logo-mark.jpg" alt="Sushi Studio" />
     <h1>СУШИ<span class="wm">СТУДИО</span></h1>
     <div class="tag">Ролл вверх · крути башню</div>
     <p class="msg" id="ovMsg">Крути цилиндр, чтобы площадка оказалась под роллом. В Суши-Студио он прыгает сам — ты только крутишь башню. Колючки и булавы — мимо.</p>
     <div class="stats" id="ovStats"></div>
     <div class="go" id="ovGo">Нажми, чтобы начать</div>
+    <div class="author">Александр Ростов</div>
     <p class="help">Телефон: веди пальцем влево-вправо<br/>Клавиатура: A / D или ← →</p>
   </div>
   <script src="three.min.js"></script>
-  <script src="game.js?v=11"></script>
+  <script src="game.js?v=12"></script>
 </body>
 </html>
