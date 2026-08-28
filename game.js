@@ -1302,8 +1302,8 @@
     var dx = e.clientX - lastPX;
     lastPX = e.clientX;
     lastPY = e.clientY;
-    rotVel = dx * 0.55;
-    towerRot += dx * 0.0095;
+    rotVel = -dx * 0.55;
+    towerRot -= dx * 0.0095;
   }
   function onUp() { dragging = false; }
 
@@ -1340,8 +1340,8 @@
     var left = keys.KeyA || keys.ArrowLeft;
     var right = keys.KeyD || keys.ArrowRight;
     if (mode === "play" || mode === "menu") {
-      if (left) rotVel = KEY_ROT;
-      else if (right) rotVel = -KEY_ROT;
+      if (left) rotVel = -KEY_ROT;
+      else if (right) rotVel = KEY_ROT;
       else if (!dragging) rotVel *= Math.pow(0.90, dt * 60);
       if (!dragging) towerRot += rotVel * dt;
     }
