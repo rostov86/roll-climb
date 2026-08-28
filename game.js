@@ -59,7 +59,7 @@
 
   var mode = "menu";
   var score = 0, shownScore = 0, combo = 0, maxCombo = 0, roe = 0, lives = START_LIVES;
-  var maxY = 0, lastLandY = 0, lastLandAng = 0, zoneIdx = 0, shownZone = -1;
+  var maxY = 0, lastLandY = 0, lastLandAng = 0, lastLandKey = "", zoneIdx = 0, shownZone = -1;
   var invuln = 0, jetT = 0, shake = 0, hurtFlash = 0, hintT = 6;
   var time = 0, lastT = 0, popT = 0;
 
@@ -1169,7 +1169,7 @@
     stairDir = 1;
     score = 0; shownScore = 0; combo = 0; maxCombo = 0; roe = 0;
     lives = START_LIVES;
-    maxY = 0; lastLandY = 0; lastLandAng = 0; zoneIdx = 0; shownZone = -1;
+    maxY = 0; lastLandY = 0; lastLandAng = 0; lastLandKey = ""; zoneIdx = 0; shownZone = -1;
     invuln = 0; jetT = 0; shake = 0; hurtFlash = 0;
     player.y = 1.15; player.vy = 0; player.prevY = 1.15;
     player.squash = 1; player.spin = 0; player.dead = false;
@@ -1251,17 +1251,24 @@
     player.y = platTop + PLAYER_H * 0.5 + 0.02;
     lastLandY = p.y;
     lastLandAng = p.ang;
+    var key = String(p.floor) + ":" + Math.round(p.ang * 50);
+    var fresh = key !== lastLandKey;
+    lastLandKey = key;
     var boost = p.type === "spring";
     player.vy = boost ? SPRING_V : BOUNCE_V;
     player.squash = boost ? 0.55 : 0.68;
-    combo += 1;
-    if (combo > maxCombo) maxCombo = combo;
-    var gain = Math.round((boost ? 50 : 25) * (1 + Math.min(combo, 24) * 0.07));
-    score += gain;
-    popGain(gain);
-    sfx(boost ? "spring" : "bounce");
-    shake = boost ? 0.28 : 0.12;
-    burst(0, platTop + 0.08, PLAYER_Z, boost ? 0x9eef88 : 0xffe2b0, boost ? 14 : 8, boost ? 3 : 1.6);
+    if (fresh) {
+      combo += 1;
+      if (combo > maxCombo) maxCombo = combo;
+      var gain = Math.round((boost ? 50 : 25) * (1 + Math.min(combo, 24) * 0.07));
+      score += gain;
+      popGain(gain);
+      sfx(boost ? "spring" : "bounce");
+      shake = boost ? 0.28 : 0.12;
+      burst(0, platTop + 0.08, PLAYER_Z, boost ? 0x9eef88 : 0xffe2b0, boost ? 14 : 8, boost ? 3 : 1.6);
+    } else {
+      sfx("bounce");
+    }
     if (p.mesh) {
       p.mesh.scale.y = 0.7;
       if (boost && p.mesh.userData.spr && p.mesh.userData.spr.userData.flash) {
@@ -1328,7 +1335,6 @@
           jetT = 0.45;
           invuln = Math.max(invuln, 0.45);
           flameG.visible = true;
-          combo += 1;
           score += 80;
           popGain(80);
           sfx("jet");
