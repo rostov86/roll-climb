@@ -392,7 +392,7 @@
           x = padX + (col + 0.5) * (innerW / cols) - iw * 0.5;
           y = padY + (row + 0.5) * (innerH / rows) - ih * 0.5;
           if (x < padX || y < padY || x + iw > w - padX || y + ih > h - padY) continue;
-          ctx.globalAlpha = odd ? 0.38 : 0.30;
+          ctx.globalAlpha = 1;
           ctx.drawImage(img, x, y, iw, ih);
         }
       }
