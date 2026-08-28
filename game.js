@@ -375,26 +375,26 @@
       var c = towerTex.image;
       var ctx = c.getContext("2d");
       var w = c.width, h = c.height;
-      var padX = w * 0.14, padY = h * 0.08;
-      var innerW = w - padX * 2, innerH = h - padY * 2;
-      var cols = 2, rows = 5, col, row, img, maxW, maxH, sc, iw, ih, x, y, odd;
+      var floorsPerTile = 8;
+      var rows = floorsPerTile / 2;
+      var row, side, img, maxW, maxH, sc, iw, ih, x, y, u, v;
       ctx.save();
+      ctx.globalAlpha = 1;
       for (row = 0; row < rows; row++) {
-        for (col = 0; col < cols; col++) {
-          odd = (row + col) % 2 === 1;
-          img = odd && imgS.width ? imgS : (imgW.width ? imgW : imgS);
-          if (!img.width) continue;
-          maxW = innerW / cols * 0.78;
-          maxH = innerH / rows * 0.72;
-          sc = Math.min(maxW / img.width, maxH / img.height);
-          iw = img.width * sc;
-          ih = img.height * sc;
-          x = padX + (col + 0.5) * (innerW / cols) - iw * 0.5;
-          y = padY + (row + 0.5) * (innerH / rows) - ih * 0.5;
-          if (x < padX || y < padY || x + iw > w - padX || y + ih > h - padY) continue;
-          ctx.globalAlpha = 1;
-          ctx.drawImage(img, x, y, iw, ih);
-        }
+        side = row % 2;
+        img = side && imgS.width ? imgS : (imgW.width ? imgW : imgS);
+        if (!img.width) continue;
+        maxW = w * 0.36;
+        maxH = h / rows * 0.62;
+        sc = Math.min(maxW / img.width, maxH / img.height);
+        iw = img.width * sc;
+        ih = img.height * sc;
+        u = side ? 0.75 : 0.25;
+        v = (row * 2 + 0.5) / floorsPerTile;
+        x = u * w - iw * 0.5;
+        y = h - v * h - ih * 0.5;
+        if (x < w * 0.06 || x + iw > w * 0.94) continue;
+        ctx.drawImage(img, x, y, iw, ih);
       }
       ctx.restore();
       towerTex.needsUpdate = true;
@@ -559,6 +559,7 @@
 
   var towerSegs = [];
   var SEG_H = 72;
+  towerTex.repeat.set(1, SEG_H / (8 * FLOOR_H));
   var towerFillMat = stdMat({ color: 0xf6f3ee, metalness: 0.06, roughness: 0.55 });
   function makeTowerSeg() {
     var wrap = new THREE.Group();
