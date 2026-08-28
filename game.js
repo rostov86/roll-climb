@@ -125,6 +125,9 @@
     } else if (kind === "spring") {
       tone(220, 0.08, "square", 0.06, 640);
       tone(520, 0.16, "sine", 0.05, 980);
+    } else if (kind === "heart") {
+      tone(520, 0.08, "sine", 0.06);
+      tone(780, 0.14, "sine", 0.05, 1040);
     } else if (kind === "roe") {
       tone(740, 0.07, "sine", 0.06);
       tone(1100, 0.12, "sine", 0.04);
@@ -469,7 +472,9 @@
     shadow: new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, opacity: 0.9, depthWrite: false }),
     base: stdMat({ map: woodDarkTex, color: 0xffffff, metalness: 0.08, roughness: 0.55 }),
     baseDk: stdMat({ color: 0xb08968, metalness: 0.1, roughness: 0.5 }),
-    wasabi: stdMat({ color: 0x9ccc65, metalness: 0.08, roughness: 0.48 })
+    wasabi: stdMat({ color: 0x9ccc65, metalness: 0.08, roughness: 0.48 }),
+    heart: stdMat({ color: 0xff4d7a, emissive: 0xff2a5a, emissiveIntensity: 0.45, metalness: 0.08, roughness: 0.38 }),
+    heartHi: new THREE.MeshBasicMaterial({ color: 0xffd0e0 })
   };
 
   var geoCache = {};
@@ -792,6 +797,33 @@
     return g;
   }
 
+  function makeHeart(y, ang) {
+    var g = new THREE.Group();
+    var L = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), mats.heart);
+    L.position.set(-0.08, 0.04, 0);
+    g.add(L);
+    var R = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), mats.heart);
+    R.position.set(0.08, 0.04, 0);
+    g.add(R);
+    var tip = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.22, 8), mats.heart);
+    tip.position.y = -0.1;
+    tip.rotation.x = Math.PI;
+    g.add(tip);
+    var hi = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), mats.heartHi);
+    hi.position.set(-0.1, 0.1, 0.08);
+    g.add(hi);
+    var r = (PLAT_IN + PLAT_OUT) * 0.5;
+    g.position.set(Math.sin(ang) * r, y + 0.82, Math.cos(ang) * r);
+    g.userData.ang = ang;
+    g.userData.y = y + 0.82;
+    g.userData.kind = "heart";
+    g.userData.ph = rand() * 6;
+    g.userData.alive = true;
+    towerGroup.add(g);
+    pickups.push(g);
+    return g;
+  }
+
   function makeJet(y, ang) {
     var g = new THREE.Group();
     var body = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 0.42, 10), mats.jet);
@@ -943,6 +975,7 @@
     if (kind !== "decoyNear" && kind !== "decoyFar" && kind !== "fork" && rand() < 0.36) {
       makeRoe(n * FLOOR_H, ang);
     }
+    if (n > 0 && n % 11 === 0) makeHeart(n * FLOOR_H, ang);
     if (n > 12 && n % 17 === 8) makeJet(n * FLOOR_H, ang);
     if (n > 9 && n % 8 === 3) makeMace(n * FLOOR_H, ang + 1.35);
     if (n > 22 && n % 13 === 2) makeMace(n * FLOOR_H, ang - 1.4);
@@ -1219,10 +1252,23 @@
       worldAng = wrapPi(u.ang + towerRot);
       dy = Math.abs(u.y - player.y);
       da = Math.abs(worldAng);
-      if (dy < r + 0.35 && da < 0.42) {
+      var hitR = u.kind === "heart" ? 0.72 : 0.42;
+      var hitY = u.kind === "heart" ? r + 0.55 : r + 0.35;
+      if (dy < hitY && da < hitR) {
         u.alive = false;
         pickups[i].visible = false;
-        if (u.kind === "jet") {
+        if (u.kind === "heart") {
+          if (lives < START_LIVES) {
+            lives += 1;
+            setLives();
+            popGain("❤");
+          } else {
+            score += 20;
+            popGain(20);
+          }
+          sfx("heart");
+          burst(0, player.y + 0.2, PLAYER_Z, 0xff4d7a, 14, 2.4);
+        } else if (u.kind === "jet") {
           player.vy = SPRING_V * 1.2;
           player.squash = 0.5;
           jetT = 0.45;
